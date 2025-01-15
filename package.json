@@ -1,0 +1,21 @@
+{
+  "name": "cron-parser",
+  "version": "1.0.0",
+  "main": "index.js",
+  "bin": {
+    "cron-parser": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "node ./dist/index.js",
+    "dev": "npm run build && npm run start"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@types/node": "^22.10.6",
+    "typescript": "^5.7.3"
+  }
+}

@@ -1,9 +1,4 @@
-type FieldType = {
-    name: string;
-    value: string;
-    min: number;
-    max: number;
-}
+import { FieldType } from "./types/core-type";
 
 export default class CronParser {
     private fields: FieldType[]= [];
@@ -30,6 +25,7 @@ export default class CronParser {
         this.fields.forEach((field) => {
             let {name, value, min, max} = field;
             let arr: number[] = [];
+            
             if(value.includes(',')) {
                 arr = value.split(',').map((v) => Number(v));
             }
@@ -48,10 +44,16 @@ export default class CronParser {
                     throw new Error(`Invalid expression, Please use * in range for ${name}`);
                 }
                 else if(!interval) {
-                    throw new Error("");
+                    throw new Error(`Invalid expression, interval can't be empty for ${name}`);
                 }
                 min = 1; 
                 arr.push(Number(interval));
+            }
+            else if(value !== '*' && !isNaN(Number(value))) {
+                arr.push(Number(value))
+            }
+            else if(value != '*'){
+                throw new Error(`Please use interger value only for ${name}`)
             }
 
             arr.forEach((v) => {
@@ -79,10 +81,7 @@ export default class CronParser {
                 }
             }
             else if(value.includes(',')) {
-                arr = value.split(',').map((v) => Number(v));
-                arr.forEach((v) => {
-
-                })
+                arr = value.split(',').map((v) => Number(v)); 
             }
             else if(value.includes('-')) {
                 const [rangeMin, rangeMax] = value.split('-').map((v) => Number(v));
@@ -91,11 +90,13 @@ export default class CronParser {
                 }
             }
             else if(value.includes('/')) {
-                // if()
                 const interval = Number(value.split('/')[1]);
                 for(let i = min; i <= max; i = i+interval) {
                     arr.push(i);
                 }
+            }
+            else if(!isNaN(Number(value))) {
+                arr.push(Number(value))
             }
             console.log(`${name.padEnd(14)} ${arr.join(' ')}`)
         });

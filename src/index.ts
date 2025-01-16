@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import CronParser from "./cronParser";
+import CronParser from "./cron-parser";
 
 try {
     if(!process.argv[2]) {

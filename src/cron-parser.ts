@@ -1,4 +1,5 @@
 import { FieldType } from "./types/core-type";
+import CronParserValidator from "./cron-parser-validator";
 
 export default class CronParser {
     private fields: FieldType[]= [];
@@ -7,7 +8,7 @@ export default class CronParser {
     constructor(cron:string) {
         const cronArr = cron.split(' ');
         if(cronArr.length != 6) {
-            throw new Error("cron expression does not have valid length");
+            throw new Error("cron expression length should be 6 units separated by space.");
         }
         const [minute, hour, dayOfMonth, month, dayOfWeeks, command] = cronArr;
 
@@ -23,83 +24,51 @@ export default class CronParser {
 
     public validate() {
         this.fields.forEach((field) => {
-            let {name, value, min, max} = field;
-            let arr: number[] = [];
-            
-            if(value.includes(',')) {
-                arr = value.split(',').map((v) => Number(v));
-            }
-            else if(value.includes('-')) {
-                arr = value.split('-').map((v) => Number(v));
-                if(arr.length > 2) {
-                    throw new Error(`Invalid range, Please use only 2 interger in range min and max for ${name}`);
-                }
-                if(arr[0] > arr[1]) {
-                    throw new Error(`Start value can't be more than end value for ${name}`);
-                }
-            }
-            else if(value.includes('/')) {
-                const [base, interval] = value.split('/');
-                if(base !== '*') {
-                    throw new Error(`Invalid expression, Please use * in range for ${name}`);
-                }
-                else if(!interval) {
-                    throw new Error(`Invalid expression, interval can't be empty for ${name}`);
-                }
-                min = 1; 
-                arr.push(Number(interval));
-            }
-            else if(value !== '*' && !isNaN(Number(value))) {
-                arr.push(Number(value))
-            }
-            else if(value != '*'){
-                throw new Error(`Please use interger value only for ${name}`)
-            }
-
-            arr.forEach((v) => {
-                if(isNaN(v)) {
-                    throw new Error(`Please use interger value only for ${name}`);
-                }
-                else if(v < min || v > max) {
-                    throw new Error(`Please use interger value in range of ${min} - ${max} only for ${name}`);
-                }
-                else if(!v) {
-                    throw new Error(`value can't be empty only for ${name}`);
-                }
-            })
+            const {name, value, min, max} = field;
+            const values = this.getValueFromExpression(value, name);
+            values.forEach((v) => CronParserValidator.handleCommonError(v, min, max, name))
         });
     }
 
     public parse(): void {
         this.fields.forEach((field) => {
-            let {name, value, min, max} = field;
-            let arr: number[] = [];
-            
-            if(value === '*') {
-                for(let i = min; i <= max; i++) {
-                    arr.push(i);
-                }
-            }
-            else if(value.includes(',')) {
-                arr = value.split(',').map((v) => Number(v)); 
-            }
-            else if(value.includes('-')) {
-                const [rangeMin, rangeMax] = value.split('-').map((v) => Number(v));
-                for(let i = rangeMin; i <= rangeMax; i++) {
-                    arr.push(i);
-                }
-            }
-            else if(value.includes('/')) {
-                const interval = Number(value.split('/')[1]);
-                for(let i = min; i <= max; i = i+interval) {
-                    arr.push(i);
-                }
-            }
-            else if(!isNaN(Number(value))) {
-                arr.push(Number(value))
-            }
-            console.log(`${name.padEnd(14)} ${arr.join(' ')}`)
+            const {name, value, min, max} = field;
+            const values = this.getValueFromExpression(value, name);
+            console.log(`${name.padEnd(14)} ${values.join(' ')}`)
         });
         console.log(`${'command'.padEnd(14)} ${this.command}`);
+    }
+
+    private getValueFromExpression(value: string, name: string): number[] {
+        if(value === '*') {
+            const { min, max } = this.fields.find(field => field.name === name)!;
+            return this.getTimeUnits(min, max, 1);
+        }
+        else if(value.includes(',')) {
+            return value.split(',').map(Number);
+        }
+        else if(value.includes('-')){
+            const [rangeMin, rangeMax] = value.split('-').map(Number);
+            CronParserValidator.handleRangeErrorExpression([rangeMin, rangeMax], name);
+            return this.getTimeUnits(rangeMin, rangeMax, 1);
+        }
+        else if(value.includes('/')) {
+            const [base, interval] = value.split('/');
+            CronParserValidator.handleIntervalErrorExpression(base, interval, name);
+            const { min, max } = this.fields.find(field => field.name === name)!;
+            return this.getTimeUnits(min, max, Number(interval));
+        }
+        else if(value !== '' && !isNaN(Number(value))) {
+            return [Number(value)];
+        }
+        throw new Error(`Invalid cron expression '${value}' in '${name}'`);
+    }
+
+    private getTimeUnits(min: number, max: number, interval: number): number[] {
+        let units: number[] = [];
+        for(let i = min; i <= max; i+=interval) {
+            units.push(i);
+        }
+        return units;
     }
 }

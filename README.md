@@ -51,11 +51,11 @@ cron-parser "*/15 0 1,15 * 1-5 /usr/bin/find"
 ### Output
 ```
 minute            0 15 30 45
-hour                0
-day of month  1 15
+hour              0
+day of month      1 15
 month             0 1 2 3 4 5 6 7 8 9 10 11 12
-day of week    1 2 3 4 5
-command        /usr/bin/find
+day of week       1 2 3 4 5
+command           /usr/bin/find
 ```
 
 ### Explanation:
@@ -66,7 +66,7 @@ command        /usr/bin/find
 + **Day of Week:** It will run on weekdays (Monday to Friday).
 + **Command:** The command /usr/bin/find will be executed.
 
-### Running Tests
+### Run Tests
 To run the test cases, use the following command:
 ```
 npm run test

@@ -6,11 +6,11 @@ export default class CronParser {
     private command: string;
 
     constructor(cron:string) {
-        const cronArr = cron.split(' ');
-        if(cronArr.length != 6) {
+        const cronExpressions = cron.split(' ');
+        if(cronExpressions.length != 6) {
             throw new Error("cron expression length should be 6 units separated by space.");
         }
-        const [minute, hour, dayOfMonth, month, dayOfWeeks, command] = cronArr;
+        const [minute, hour, dayOfMonth, month, dayOfWeeks, command] = cronExpressions;
 
         this.fields = [
             {name: 'minute', value: minute, min: 0, max: 59},
@@ -22,7 +22,7 @@ export default class CronParser {
         this.command = command;
     }
 
-    public validate() {
+    public validate(): void {
         this.fields.forEach((field) => {
             const {name, value, min, max} = field;
             const values = this.getValueFromExpression(value, name);
@@ -32,7 +32,7 @@ export default class CronParser {
 
     public parse(): void {
         this.fields.forEach((field) => {
-            const {name, value, min, max} = field;
+            const { name, value } = field;
             const values = this.getValueFromExpression(value, name);
             console.log(`${name.padEnd(14)} ${values.join(' ')}`)
         });
@@ -45,7 +45,12 @@ export default class CronParser {
             return this.getTimeUnits(min, max, 1);
         }
         else if(value.includes(',')) {
-            return value.split(',').map(Number);
+            const values =  value.split(',');
+            const units: number[]= [];
+            values.forEach((v) => {
+                units.push(...this.getValueFromExpression(v, name));
+            })
+            return units;
         }
         else if(value.includes('-')){
             const [rangeMin, rangeMax] = value.split('-').map(Number);

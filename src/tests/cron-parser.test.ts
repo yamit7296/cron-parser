@@ -9,7 +9,7 @@ describe(`CronParser`, () => {
   test(`should throw an error if a field has an invalid range`, () => {
     const invalidCron = `5 10 15 1 30 /usr/bin/command`;
     const cronParser = new CronParser(invalidCron);
-    expect(() => cronParser.validate()).toThrow(`Please use interger value in range of 0 - 7 only for day of week`);
+    expect(() => cronParser.validate()).toThrow(`Please use interger value in range of 0 - 7 in day of week expression`);
   });
 
   test(`should throw an error if a field has an invalid value (e.g., non-integer)`, () => {
@@ -21,7 +21,7 @@ describe(`CronParser`, () => {
   test(`should throw an error if the range is inverted (min > max)`, () => {
     const invalidCron = `5 10 15 6-1 1 /usr/bin/command`;
     const cronParser = new CronParser(invalidCron);
-    expect(() => cronParser.validate()).toThrow(`Start value can\'t be more than end value for month`);
+    expect(() => cronParser.validate()).toThrow(`Start value can\'t be more than end value in month expression`);
   });
 
   test(`should parse and print the cron fields correctly`, () => {

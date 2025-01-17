@@ -12,36 +12,42 @@
 
 Follow these steps to setup **Cron Parser** in your project:
 
-1. Navigate to project directory:
-```
-cd project_dir
+
+### Cloning the Repository
+
+To clone the repository and set up the project locally, follow these steps:
+
+1. Open a terminal window on your computer.
+2. Navigate to the directory where you want to clone the repository.
+3. Run the following command to clone the repository:
+
+```bash
+git clone https://github.com/yamit7296/cron-parser.git
 ```
 
-2. Install dependencies:
+2. Navigate to project directory:
+```
+cd cron-parser
+```
+
+3. Install dependencies:
 ```
 npm install
 ```
 
-3. Build the project:
+4. Build the project:
 ```
 npm run build
 ```
 
-4. Install the Cron Parser CLI tool locally:
+5. Install the Cron Parser CLI tool locally:
 ```
-npm i .
+npm i -g .
 ```
 
 Now, we are ready to run **Cron Parser** in terminal.
 
 ## Usage
-
-> ### **NOTE**
-> If you see `permission denied: cron-parser` then you have to provide executable permissions to file by running below cmd in terminal
-
-```
-chmod +x dist/index.js
-```
 
 To test run the following command in terminal
 ```

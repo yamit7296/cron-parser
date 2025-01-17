@@ -25,22 +25,22 @@ To clone the repository and set up the project locally, follow these steps:
 git clone https://github.com/yamit7296/cron-parser.git
 ```
 
-2. Navigate to project directory:
+4. Navigate to project directory:
 ```
 cd cron-parser
 ```
 
-3. Install dependencies:
+5. Install dependencies:
 ```
 npm install
 ```
 
-4. Build the project:
+6. Build the project:
 ```
 npm run build
 ```
 
-5. Install the Cron Parser CLI tool locally:
+7. Install the Cron Parser CLI tool locally:
 ```
 npm i -g .
 ```

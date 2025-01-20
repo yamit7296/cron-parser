@@ -16,8 +16,8 @@ export default class CronParser {
             {name: 'minute', value: minute, min: 0, max: 59},
             {name: 'hour', value: hour, min: 0, max: 23},
             {name: 'day of month', value: dayOfMonth, min: 1, max: 31},
-            {name: 'month', value: month, min: 0, max: 12},
-            {name: 'day of week', value: dayOfWeeks, min: 0, max: 7}
+            {name: 'month', value: month, min: 1, max: 12},
+            {name: 'day of week', value: dayOfWeeks, min: 1, max: 7}
         ];
         this.command = command;
     }
